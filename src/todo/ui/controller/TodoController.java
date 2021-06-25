@@ -146,7 +146,7 @@ public class TodoController {
     //region SAVE Item
     @FXML
     public void onSaveNewItem(ActionEvent actionEvent) {
-
+        System.out.println(this.getClass().getSimpleName() + " > " + "onSaveNewItem()> deadline: " + datePickerDeadline.getValue());
         if (!textFieldTitle.getText().isEmpty() && !textFieldTask.getText().isEmpty()) {
 
             Todo todo = new Todo(
@@ -160,10 +160,11 @@ public class TodoController {
             System.out.println(this.getClass().getSimpleName() + " > " + "onSaveNewItem Todo > RESULT ID: " + result);
 
             if (result > 0) {
-                todo.setId(result);
-
-                tableView.getItems().add(todo);
                 clearTextFields();
+
+                todo.setId(result);
+                tableView.getItems().add(todo);
+
                 setInfoMessage("Saved!");
             }
 
@@ -241,8 +242,6 @@ public class TodoController {
     //region Common methods
 
     private LocalDate getLocalDateIfNullOrNot() {
-
-        System.out.println(this.getClass().getSimpleName() + " > " + "getLocalDateIfNullOrNot()> deadline: " + datePickerDeadline.getValue());
         if (null != datePickerDeadline.getValue()) {
             return datePickerDeadline.getValue();
         } else {
@@ -254,16 +253,13 @@ public class TodoController {
     private void clearTextFields() {
         textFieldTitle.clear();
         textFieldTask.clear();
+        datePickerDeadline.setValue(null);
 
-        //TODO FIX ME
-        datePickerDeadline.getEditor().clear();
+        //TODO FIX ME: set Text "Prio" after clearing
+        comboBoxPrio.setValue(null);
 
-
-        //TODO FIX ME
-        comboBoxPrio.getEditor().clear();
-
-        //TODO FIX ME
-        comboBoxState.getEditor().clear();
+        //TODO FIX ME: set Text "State" after clearing
+        comboBoxState.setValue(null);
 
     }
 
