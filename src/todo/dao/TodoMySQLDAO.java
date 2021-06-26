@@ -57,7 +57,7 @@ public class TodoMySQLDAO implements TodoDAO {
     //region SAVE Item
     @Override
     public int save(Todo item) {
-        System.out.println(this.getClass().getSimpleName() + " > " + "save(Todo item)> deadline: " + item.getDeadline());
+
         int id = -1;
         try {
             //insert new Item and take the "id" in Callback
@@ -71,11 +71,11 @@ public class TodoMySQLDAO implements TodoDAO {
                     + TABLE_STATE
                     + ") VALUES (?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
 
-            insertStatement.setString(1,item.getTitle());
-            insertStatement.setString(2,item.getTask());
-            insertStatement.setDate(3,convertLocalDateToDate(item.getDeadline()));
-            insertStatement.setInt(4,Prio.prioToInt(item.getPriority()) );
-            insertStatement.setInt(5,State.stateToInt(item.getState()));
+            insertStatement.setString(1, item.getTitle());
+            insertStatement.setString(2, item.getTask());
+            insertStatement.setDate(3, convertLocalDateToDate(item.getDeadline()));
+            insertStatement.setInt(4, Prio.prioToInt(item.getPriority()));
+            insertStatement.setInt(5, State.stateToInt(item.getState()));
 
 
             int affectedRows = insertStatement.executeUpdate();
@@ -86,62 +86,42 @@ public class TodoMySQLDAO implements TodoDAO {
 
             // generatedKeys.next() -> generatedKeys.getInt(1) -> id
             try (ResultSet generatedKeys = insertStatement.getGeneratedKeys()) {
-
                 if (generatedKeys.next()) {
-
                     //get "id" of new DBItem as result after complete added Item into DB.
                     id = generatedKeys.getInt(1);
-
                     System.out.println(this.getClass().getSimpleName() + " > " + "save(Todo item)> RESULT id: " + id);
-
                 } else {
                     throw new SQLException("Creating user failed, no ID obtained.");
                 }
             }
-
-            System.out.println(this.getClass().getSimpleName() + " > " + "save(Todo item)> UpdateCount: " + insertStatement.getUpdateCount());
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return id;
     }
+
     //endregion
 
     //region UPDATE Item
     @Override
     public boolean update(int id, Object newValue, String dbTableField) {
-        System.out.println("newValue: " + newValue);
-        System.out.println("dbTableField: " + dbTableField);
         try {
             PreparedStatement updateStatement = con.prepareStatement("UPDATE "
                     + SQL_DB_NAME_TODOLISTE
                     + " SET " + dbTableField + " = ? WHERE id = ?");
 
-            if (dbTableField.equals(TABLE_TITLE) || dbTableField.equals(TABLE_TASK)) {
-                updateStatement.setString(1, (String) newValue);
-            } else if (dbTableField.equals(TABLE_DEADLINE)) {
-
-                updateStatement.setDate(1, convertLocalDateToDate((LocalDate) newValue));
-                System.out.println(this.getClass().getSimpleName() + " > " + "update()> LocalDate: " + newValue);
-                System.out.println(this.getClass().getSimpleName() + " > " + "update()> Date: " + convertLocalDateToDate((LocalDate) newValue));
-
-            } else if (dbTableField.equals(TABLE_PRIORITY)) {
-
-                updateStatement.setInt(1, Prio.prioToInt((Prio) newValue));
-
-            } else if (dbTableField.equals(TABLE_STATE)) {
-                updateStatement.setInt(1, State.stateToInt((State) newValue));
-
+            switch (dbTableField) {
+                case TABLE_TITLE, TABLE_TASK -> updateStatement.setString(1, (String) newValue);
+                case TABLE_DEADLINE -> updateStatement.setDate(1, convertLocalDateToDate((LocalDate) newValue));
+                case TABLE_PRIORITY -> updateStatement.setInt(1, Prio.prioToInt((Prio) newValue));
+                case TABLE_STATE -> updateStatement.setInt(1, State.stateToInt((State) newValue));
             }
 
             updateStatement.setInt(2, id);
 
-            System.out.println(this.getClass().getSimpleName() + " > " + "update()> Value: " + newValue);
-
             int resultUpdate = updateStatement.executeUpdate();
             System.out.println(this.getClass().getSimpleName() + " > " + "update()> update result: " + updateStatement.getUpdateCount());
-
 
             return switch (resultUpdate) {
                 case -1 -> false;
@@ -157,6 +137,14 @@ public class TodoMySQLDAO implements TodoDAO {
         }
 
         return false;
+    }
+    //endregion
+
+    //region FIND ITEM
+
+    @Override
+    public List<Todo> findBy(String teilTaskName, String dbTableField) {
+        return null;
     }
     //endregion
 

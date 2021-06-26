@@ -9,6 +9,8 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="todo.ui.controller.TodoController">
@@ -39,10 +41,20 @@
         </ToolBar>
     </top>
     <bottom>
-        <Label fx:id="infoField" alignment="CENTER" contentDisplay="CENTER" prefHeight="57.0" prefWidth="600.0" textAlignment="CENTER" textFill="#e12c2c" BorderPane.alignment="CENTER">
-            <font>
-                <Font size="22.0" />
-            </font>
-        </Label>
+      <HBox BorderPane.alignment="CENTER">
+         <children>
+              <Label fx:id="infoField" alignment="CENTER" contentDisplay="CENTER" prefHeight="58.0" prefWidth="314.0" textAlignment="CENTER" textFill="#e12c2c">
+                  <font>
+                      <Font size="22.0" />
+                  </font>
+              </Label>
+            <VBox prefHeight="58.0" prefWidth="253.0">
+               <children>
+                  <TextField fx:id="textFieldSearch" />
+                  <Button fx:id="btnSearch" mnemonicParsing="false" onAction="#onSearch" prefHeight="26.0" prefWidth="251.0" text="Search" />
+               </children>
+            </VBox>
+         </children>
+      </HBox>
     </bottom>
 </BorderPane>

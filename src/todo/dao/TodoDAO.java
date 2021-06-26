@@ -12,7 +12,10 @@ public interface TodoDAO {
     List<Todo> findAll();
 
     int save(Todo todo);
+    List<Todo> findBy(String teilTaskName, String dbTableField);
+
     boolean update(int id, Object newValue, String dbTableField);
+
     HashMap<Integer, Boolean> delete(List<Integer> ids);
 
     //TODO findBy/suche/filter

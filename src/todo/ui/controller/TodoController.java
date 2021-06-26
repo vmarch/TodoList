@@ -11,7 +11,6 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import todo.dao.TodoDAO;
-import todo.dao.TodoDummyDAO;
 import todo.dao.TodoMySQLDAO;
 import todo.db.DBException;
 import todo.model.Prio;
@@ -19,17 +18,19 @@ import todo.model.State;
 import todo.model.Todo;
 import todo.tools.DatePickerTableCell;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static todo.tools.ConstantManager.*;
 
 public class TodoController {
 
     private TodoDAO dao;  // Interface
-
+    private List<Todo> todoList;
     //region FXML fields
     @FXML
     private TableView<Todo> tableView;
@@ -66,6 +67,12 @@ public class TodoController {
 
     @FXML
     private Button onSaveButton;
+
+    @FXML
+    private TextField textFieldSearch;
+
+    @FXML
+    private Button btnSearch;
 
     @FXML
     public Label infoField;
@@ -119,14 +126,11 @@ public class TodoController {
         //Cell-Data
         columnTitle.setCellFactory(TextFieldTableCell.forTableColumn()); // von "normalen" TableZellen zu "TextField"
         columnTask.setCellFactory(TextFieldTableCell.forTableColumn()); // von "normalen" TableZellen zu "TextField"
-        //TODO deadline.setCellFactory
+        columnDeadline.setCellFactory(DatePickerTableCell.forTableColumn()); // von "normalen" TableZellen zu "DatePicker"
+        columnPrio.setCellFactory(ComboBoxTableCell.forTableColumn(Prio.values())); // von "normalen" TableZellen zu "ComboBox"
+        columnState.setCellFactory(ComboBoxTableCell.forTableColumn(State.values())); // von "normalen" TableZellen zu "ComboBox"
 
-        columnDeadline.setCellFactory(DatePickerTableCell.forTableColumn());
-
-        columnPrio.setCellFactory(ComboBoxTableCell.forTableColumn(Prio.values())); // von "normalen" TableZellen zu "TextField"
-        columnState.setCellFactory(ComboBoxTableCell.forTableColumn(State.values())); // von "normalen" TableZellen zu "TextField"
-
-        List<Todo> todoList = dao.findAll();
+        todoList = dao.findAll();
         tableView.getItems().setAll(todoList);
         if (todoList.size() == 0) {
             setInfoMessage("Write yours first Task!");
@@ -146,7 +150,6 @@ public class TodoController {
     //region SAVE Item
     @FXML
     public void onSaveNewItem(ActionEvent actionEvent) {
-        System.out.println(this.getClass().getSimpleName() + " > " + "onSaveNewItem()> deadline: " + datePickerDeadline.getValue());
         if (!textFieldTitle.getText().isEmpty() && !textFieldTask.getText().isEmpty()) {
 
             Todo todo = new Todo(
@@ -178,8 +181,22 @@ public class TodoController {
     }
     //endregion
 
+
+    //SEARCH by part of word
+    @FXML
+    void onSearch(ActionEvent event) {
+
+        String searchText = textFieldSearch.getText();
+        List<Todo> filteredList = new ArrayList<>();
+
+        filteredList = todoList.stream().filter(todo -> todo.getTask().matches("(?i).*" + searchText + ".*"))
+                .collect(Collectors.toList());
+
+        tableView.getItems().setAll(filteredList);
+    }
+
     //region CHANGE Item
-    public void onChangeItem(int id, Object newValue, String tableColumn) {
+    public void onChangeItem(int id, Object newValue, String tableColumn) throws SQLException {
         tableView.setEditable(true);
 
         if (dao.update(id, newValue, switch (tableColumn) {
@@ -191,6 +208,16 @@ public class TodoController {
 
             default -> throw new IllegalStateException("Unexpected value: " + tableColumn);
         })) {
+
+            //update base TodoList
+            Todo currentTodo = todoList.stream().filter(todo -> todo.getId() == id).collect(Collectors.toList()).get(0);
+            switch (tableColumn) {
+                case "columnTitle" -> currentTodo.setTitle((String) newValue);
+                case "columnTask" -> currentTodo.setTask((String) newValue);
+                case "columnDeadline" -> currentTodo.setDeadline((LocalDate) newValue);
+                case "columnPrio" -> currentTodo.setPriority((Prio) newValue);
+                case "columnState" -> currentTodo.setState((State) newValue);
+            }
             setInfoMessage("Item is changed.");
         } else
             setErrorMessage("Item is not changed!");
@@ -203,9 +230,6 @@ public class TodoController {
         for (Todo item : todos) {
             listIDToDelete.add(item.getId());
         }
-
-
-        System.out.println(this.getClass().getSimpleName() + " > " + "onDeleteItems() " + "delete...");
 
         HashMap<Integer, Boolean> hashMapIDAfterDeletionInDB = dao.delete(listIDToDelete);
 
@@ -232,8 +256,8 @@ public class TodoController {
         } else {
             System.out.println(this.getClass().getSimpleName() + " > " + "onDeleteItems() " + "Error during deleting.");
         }
-
-        tableView.getItems().removeAll(deletedItemsInDB);
+        todoList.removeAll(deletedItemsInDB);              // actualize base TodoList.
+        tableView.getItems().removeAll(deletedItemsInDB);  // actualize current TodoList
         tableView.getSelectionModel().clearSelection();
 
     }
@@ -257,7 +281,6 @@ public class TodoController {
 
         //TODO FIX ME: set Text "Prio" after clearing
         comboBoxPrio.setValue(null);
-
         //TODO FIX ME: set Text "State" after clearing
         comboBoxState.setValue(null);
 
@@ -290,7 +313,7 @@ public class TodoController {
 
     //<..., ?>  ?-> belibiger Datentyp, aber Typsicher
     @FXML
-    public void onCommit(TableColumn.CellEditEvent<Todo, ?> event) {
+    public void onCommit(TableColumn.CellEditEvent<Todo, ?> event) throws SQLException {
 //        String columnName = event.getTableColumn().getText();
 //        List<?> list = List.of("a", "s");
 

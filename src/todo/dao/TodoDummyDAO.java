@@ -91,7 +91,15 @@ public class TodoDummyDAO implements TodoDAO {
     }
     //endregion
 
-    //TODO später
+
+    //TODO to MADE
+    //region FIND By
+    @Override
+    public List<Todo> findBy(String teilTaskName, String dbTableField) {
+        return null;
+    }
+    //endregion
+
     //region UPDATE Item
     @Override
     public boolean update(int id, Object newValue, String dbTableField) {
