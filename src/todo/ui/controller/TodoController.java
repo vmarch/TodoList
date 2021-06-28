@@ -2,6 +2,7 @@ package todo.ui.controller;
 
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
+import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -17,20 +18,26 @@ import todo.model.Prio;
 import todo.model.State;
 import todo.model.Todo;
 import todo.tools.DatePickerTableCell;
+import todo.tools.Filter;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static todo.model.Prio.*;
+import static todo.model.State.*;
 import static todo.tools.ConstantManager.*;
 
 public class TodoController {
 
     private TodoDAO dao;  // Interface
     private List<Todo> todoList;
+    Filter filter = new Filter();
+
     //region FXML fields
     @FXML
     private TableView<Todo> tableView;
@@ -60,13 +67,13 @@ public class TodoController {
     private DatePicker datePickerDeadline;
 
     @FXML
+    private Button onSaveButton;
+
+    @FXML
     private ComboBox<Prio> comboBoxPrio;
 
     @FXML
     private ComboBox<State> comboBoxState;
-
-    @FXML
-    private Button onSaveButton;
 
     @FXML
     private TextField textFieldSearch;
@@ -76,6 +83,26 @@ public class TodoController {
 
     @FXML
     public Label infoField;
+
+
+    @FXML
+    private CheckBox checkBoxLowPrio;
+
+    @FXML
+    private CheckBox checkBoxMediumPrio;
+
+    @FXML
+    private CheckBox checkBoxHighPrio;
+
+    @FXML
+    private CheckBox checkBoxInProgress;
+
+    @FXML
+    private CheckBox checkBoxWait;
+
+    @FXML
+    private CheckBox checkBoxDone;
+
     //endregion
 
     //region INITIALIZE
@@ -83,7 +110,6 @@ public class TodoController {
     void initialize() {
 
 //        dao = new TodoDummyDAO();
-
         try {
             dao = new TodoMySQLDAO();
         } catch (DBException e) {
@@ -94,11 +120,67 @@ public class TodoController {
             Platform.exit();
         }
 
+        setupCheckBoxFilter();
+
         setupContextMenu();
 
         setupTable();
 
         setupComboBox();
+    }
+
+    private void setupCheckBoxFilter() {
+
+
+        checkBoxLowPrio.selectedProperty().addListener((o, oldValue, newValue) -> {
+            System.out.println(this.getClass().getSimpleName() + " > " + "checkBoxLowPrio > Value: " + newValue);
+
+//            if (newValue) {
+//                FilteredList<Todo> filteredListObs = new FilteredList<>(tableView.getItems(), (todo -> todo.getPriority() == LOW));
+//                tableView.getItems().setAll(filteredListObs.stream().toList());
+//            } else {
+//                tableView.getItems().setAll(todoList);
+//            }
+//            //------------------------------ODER----------------------
+//            if (newValue) {
+//                List<Todo> filteredListStream = todoList.stream().filter(todo -> todo.getPriority() == LOW).collect(Collectors.toList());
+//                tableView.getItems().setAll(filteredListStream);
+//            } else {
+//                tableView.getItems().setAll(dao.findAll());
+//            }
+            filter.setPrioLow(newValue);
+            updateFilter();
+        });
+
+        checkBoxMediumPrio.selectedProperty().addListener((o, oldValue, newValue) -> {
+            System.out.println(this.getClass().getSimpleName() + " > " + "checkBox.... > Value: " + newValue);
+            filter.setPrioMedium(newValue);
+            updateFilter();
+        });
+        checkBoxHighPrio.selectedProperty().addListener((o, oldValue, newValue) -> {
+            System.out.println(this.getClass().getSimpleName() + " > " + "checkBox.... > Value: " + newValue);
+            filter.setPrioHigh(newValue);
+            updateFilter();
+        });
+
+        checkBoxInProgress.selectedProperty().addListener((o, oldValue, newValue) -> {
+            System.out.println(this.getClass().getSimpleName() + " > " + "checkBox.... > Value: " + newValue);
+           filter.setStateInProgress(newValue);
+            updateFilter();
+        });
+
+        checkBoxWait.selectedProperty().addListener((o, oldValue, newValue) -> {
+            System.out.println(this.getClass().getSimpleName() + " > " + "checkBox.... > Value: " + newValue);
+
+            filter.setStateWait(newValue);
+            updateFilter();
+        });
+
+        checkBoxDone.selectedProperty().addListener((o, oldValue, newValue) -> {
+            System.out.println(this.getClass().getSimpleName() + " > " + "checkBox.... > Value: " + newValue);
+            filter.setStateDone(newValue);
+            updateFilter();
+        });
     }
 
     private void setupContextMenu() {
@@ -181,8 +263,7 @@ public class TodoController {
     }
     //endregion
 
-
-    //SEARCH by part of word
+    //region SEARCH by part of word
     @FXML
     void onSearch(ActionEvent event) {
 
@@ -194,6 +275,11 @@ public class TodoController {
 
         tableView.getItems().setAll(filteredList);
     }
+
+
+    public void clearSearchAction(ActionEvent actionEvent) {
+    }
+    //endregion
 
     //region CHANGE Item
     public void onChangeItem(int id, Object newValue, String tableColumn) throws SQLException {
@@ -264,6 +350,37 @@ public class TodoController {
     //endregion
 
     //region Common methods
+
+    private void updateFilter() {
+
+        if (filter.isSomeOneFiltersActive()) {
+            List<Todo> filteredListStream = todoList.stream().filter(todo -> {
+
+
+                if (filter.getPrioLow() && todo.getPriority() == LOW) {
+                    return true;
+                } else if (filter.getPrioMedium() && todo.getPriority() == MEDIUM) {
+                    return true;
+                } else if (filter.getPrioHigh() && todo.getPriority() == HIGH) {
+                    return true;
+                } else if (filter.getStateInProgress() && todo.getState() == IN_PROGRESS) {
+                    return true;
+                } else if (filter.getStateWait() && todo.getState() == WAIT) {
+                    return true;
+                } else if (filter.getStateDone() && todo.getState() == DONE) {
+                    return true;
+                } else {
+                    return false;
+                }
+
+            }).collect(Collectors.toList());
+
+            tableView.getItems().setAll(filteredListStream);
+
+        } else {
+            tableView.getItems().setAll(todoList);
+        }
+    }
 
     private LocalDate getLocalDateIfNullOrNot() {
         if (null != datePickerDeadline.getValue()) {

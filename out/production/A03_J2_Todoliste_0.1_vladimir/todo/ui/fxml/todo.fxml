@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
@@ -28,18 +32,6 @@
             </columnResizePolicy>
         </TableView>
     </center>
-    <top>
-        <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-            <items>
-                <TextField fx:id="textFieldTitle" prefHeight="26.0" prefWidth="88.0" promptText="Title" />
-                <TextField fx:id="textFieldTask" prefHeight="26.0" prefWidth="89.0" promptText="Task" />
-                <DatePicker fx:id="datePickerDeadline" prefHeight="26.0" prefWidth="114.0" promptText="Deadline" />
-                <ComboBox fx:id="comboBoxPrio" prefHeight="26.0" prefWidth="89.0" promptText="Prio" />
-                <ComboBox fx:id="comboBoxState" prefHeight="26.0" prefWidth="83.0" promptText="State" />
-                <Button fx:id="onSaveButton" mnemonicParsing="false" onAction="#onSaveNewItem" text="Save" />
-            </items>
-        </ToolBar>
-    </top>
     <bottom>
       <HBox BorderPane.alignment="CENTER">
          <children>
@@ -48,13 +40,52 @@
                       <Font size="22.0" />
                   </font>
               </Label>
-            <VBox prefHeight="58.0" prefWidth="253.0">
+            <VBox prefHeight="58.0" prefWidth="289.0">
                <children>
                   <TextField fx:id="textFieldSearch" />
-                  <Button fx:id="btnSearch" mnemonicParsing="false" onAction="#onSearch" prefHeight="26.0" prefWidth="251.0" text="Search" />
+                  <HBox prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <MenuButton mnemonicParsing="false" text="MenuButton">
+                          <items>
+                            <MenuItem mnemonicParsing="false" text="Action 1" />
+                            <MenuItem mnemonicParsing="false" text="Action 2" />
+                          </items>
+                        </MenuButton>
+                        <Button fx:id="btnSearch" mnemonicParsing="false" onAction="#onSearch" prefHeight="25.0" prefWidth="80.0" text="Search" />
+                        <Button fx:id="btnClear" mnemonicParsing="false" onAction="#clearSearchAction" prefHeight="25.0" prefWidth="86.0" text="Clear" />
+                     </children>
+                  </HBox>
                </children>
             </VBox>
          </children>
       </HBox>
     </bottom>
+   <top>
+      <VBox prefHeight="79.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+         <children>
+            <ToolBar prefHeight="40.0" prefWidth="200.0">
+               <items>
+                  <TextField fx:id="textFieldTitle" prefHeight="26.0" prefWidth="88.0" promptText="Title" />
+                  <TextField fx:id="textFieldTask" prefHeight="26.0" prefWidth="89.0" promptText="Task" />
+                  <DatePicker fx:id="datePickerDeadline" prefHeight="26.0" prefWidth="114.0" promptText="Deadline" />
+                  <ComboBox fx:id="comboBoxPrio" prefHeight="26.0" prefWidth="89.0" promptText="Prio" />
+                  <ComboBox fx:id="comboBoxState" prefHeight="26.0" prefWidth="106.0" promptText="State" />
+                  <Button fx:id="onSaveButton" mnemonicParsing="false" onAction="#onSaveNewItem" prefHeight="26.0" prefWidth="53.0" text="Save" />
+               </items>
+            </ToolBar>
+            <ToolBar prefHeight="40.0" prefWidth="200.0">
+               <items>
+                  <CheckBox fx:id="checkBoxLowPrio" mnemonicParsing="false" text="Low" />
+                  <CheckBox fx:id="checkBoxMediumPrio" mnemonicParsing="false" text="Medium" />
+                  <CheckBox fx:id="checkBoxHighPrio" mnemonicParsing="false" text="High" />
+                  <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
+                  <CheckBox fx:id="checkBoxInProgress" mnemonicParsing="false" text="in Progress" />
+                  <CheckBox fx:id="checkBoxWait" mnemonicParsing="false" text="Wait" />
+                  <CheckBox fx:id="checkBoxDone" mnemonicParsing="false" text="Done" />
+                  <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="1.0" />
+               </items>
+            </ToolBar>
+         </children>
+      </VBox>
+   </top>
 </BorderPane>
