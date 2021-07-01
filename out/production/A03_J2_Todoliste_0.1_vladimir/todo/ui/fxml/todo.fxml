@@ -1,91 +1,85 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.DatePicker?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.MenuButton?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ToolBar?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="todo.ui.controller.TodoController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
+            prefWidth="654.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="todo.ui.controller.TodoController">
     <center>
         <TableView fx:id="tableView" editable="true" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
             <columns>
-                <TableColumn fx:id="columnTitle" onEditCommit="#onCommit" prefWidth="75.0" text="Title" />
-                <TableColumn fx:id="columnTask" onEditCommit="#onCommit" prefWidth="75.0" text="Task" />
-                <TableColumn fx:id="columnDeadline" onEditCommit="#onCommit" prefWidth="75.0" text="Deadline" />
-                <TableColumn fx:id="columnPrio" onEditCommit="#onCommit" prefWidth="75.0" text="Prio" />
-                <TableColumn fx:id="columnState" onEditCommit="#onCommit" prefWidth="75.0" text="State" />
+                <TableColumn fx:id="columnTitle" onEditCommit="#onCommit" prefWidth="75.0" text="Title"/>
+                <TableColumn fx:id="columnTask" onEditCommit="#onCommit" prefWidth="75.0" text="Task"/>
+                <TableColumn fx:id="columnDeadline" onEditCommit="#onCommit" prefWidth="75.0" text="Deadline"/>
+                <TableColumn fx:id="columnPrio" onEditCommit="#onCommit" prefWidth="75.0" text="Prio"/>
+                <TableColumn fx:id="columnState" onEditCommit="#onCommit" prefWidth="75.0" text="State"/>
             </columns>
             <columnResizePolicy>
-                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
             </columnResizePolicy>
         </TableView>
     </center>
     <bottom>
-      <HBox BorderPane.alignment="CENTER">
-         <children>
-              <Label fx:id="infoField" alignment="CENTER" contentDisplay="CENTER" prefHeight="58.0" prefWidth="314.0" textAlignment="CENTER" textFill="#e12c2c">
-                  <font>
-                      <Font size="22.0" />
-                  </font>
-              </Label>
-            <VBox prefHeight="58.0" prefWidth="289.0">
-               <children>
-                  <TextField fx:id="textFieldSearch" />
-                  <HBox prefHeight="100.0" prefWidth="200.0">
-                     <children>
-                        <MenuButton mnemonicParsing="false" text="MenuButton">
-                          <items>
-                            <MenuItem mnemonicParsing="false" text="Action 1" />
-                            <MenuItem mnemonicParsing="false" text="Action 2" />
-                          </items>
-                        </MenuButton>
-                        <Button fx:id="btnSearch" mnemonicParsing="false" onAction="#onSearch" prefHeight="25.0" prefWidth="80.0" text="Search" />
-                        <Button fx:id="btnClear" mnemonicParsing="false" onAction="#clearSearchAction" prefHeight="25.0" prefWidth="86.0" text="Clear" />
-                     </children>
-                  </HBox>
-               </children>
-            </VBox>
-         </children>
-      </HBox>
+        <HBox BorderPane.alignment="CENTER">
+            <children>
+                <Label fx:id="infoField" alignment="CENTER" contentDisplay="CENTER" prefHeight="58.0" prefWidth="314.0"
+                       textAlignment="CENTER" textFill="#e12c2c">
+                    <font>
+                        <Font size="22.0"/>
+                    </font>
+                </Label>
+                <VBox prefHeight="58.0" prefWidth="289.0">
+                    <children>
+                        <TextField fx:id="textFieldSearch"/>
+                        <HBox prefHeight="100.0" prefWidth="200.0">
+                            <children>
+                                <MenuButton mnemonicParsing="false" text="MenuButton">
+                                    <items>
+                                        <MenuItem mnemonicParsing="false" text="Action 1"/>
+                                        <MenuItem mnemonicParsing="false" text="Action 2"/>
+                                    </items>
+                                </MenuButton>
+                                <Button fx:id="btnSearch" mnemonicParsing="false" onAction="#onSearch" prefHeight="25.0"
+                                        prefWidth="80.0" text="Search"/>
+                                <Button fx:id="btnClear" mnemonicParsing="false" onAction="#clearSearchAction"
+                                        prefHeight="25.0" prefWidth="86.0" text="Clear"/>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </children>
+        </HBox>
     </bottom>
-   <top>
-      <VBox prefHeight="79.0" prefWidth="600.0" BorderPane.alignment="CENTER">
-         <children>
-            <ToolBar prefHeight="40.0" prefWidth="200.0">
-               <items>
-                  <TextField fx:id="textFieldTitle" prefHeight="26.0" prefWidth="88.0" promptText="Title" />
-                  <TextField fx:id="textFieldTask" prefHeight="26.0" prefWidth="89.0" promptText="Task" />
-                  <DatePicker fx:id="datePickerDeadline" prefHeight="26.0" prefWidth="114.0" promptText="Deadline" />
-                  <ComboBox fx:id="comboBoxPrio" prefHeight="26.0" prefWidth="89.0" promptText="Prio" />
-                  <ComboBox fx:id="comboBoxState" prefHeight="26.0" prefWidth="106.0" promptText="State" />
-                  <Button fx:id="onSaveButton" mnemonicParsing="false" onAction="#onSaveNewItem" prefHeight="26.0" prefWidth="53.0" text="Save" />
-               </items>
-            </ToolBar>
-            <ToolBar prefHeight="40.0" prefWidth="200.0">
-               <items>
-                  <CheckBox fx:id="checkBoxLowPrio" mnemonicParsing="false" text="Low" />
-                  <CheckBox fx:id="checkBoxMediumPrio" mnemonicParsing="false" text="Medium" />
-                  <CheckBox fx:id="checkBoxHighPrio" mnemonicParsing="false" text="High" />
-                  <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
-                  <CheckBox fx:id="checkBoxInProgress" mnemonicParsing="false" text="in Progress" />
-                  <CheckBox fx:id="checkBoxWait" mnemonicParsing="false" text="Wait" />
-                  <CheckBox fx:id="checkBoxDone" mnemonicParsing="false" text="Done" />
-                  <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="1.0" />
-               </items>
-            </ToolBar>
-         </children>
-      </VBox>
-   </top>
+    <top>
+        <VBox prefHeight="79.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+            <children>
+                <ToolBar prefHeight="40.0" prefWidth="200.0">
+                    <items>
+                        <TextField fx:id="textFieldTitle" prefHeight="26.0" prefWidth="88.0" promptText="Title"/>
+                        <TextField fx:id="textFieldTask" prefHeight="26.0" prefWidth="89.0" promptText="Task"/>
+                        <DatePicker fx:id="datePickerDeadline" prefHeight="26.0" prefWidth="114.0"
+                                    promptText="Deadline"/>
+                        <ComboBox fx:id="comboBoxPrio" prefHeight="26.0" prefWidth="89.0" promptText="Prio"/>
+                        <ComboBox fx:id="comboBoxState" prefHeight="26.0" prefWidth="106.0" promptText="State"/>
+                        <Button fx:id="onSaveButton" mnemonicParsing="false" onAction="#onSaveNewItem" prefHeight="26.0"
+                                prefWidth="53.0" text="Save"/>
+                        <Button fx:id="btnSaveAsXML" mnemonicParsing="false" onAction="#onActionSaveAsXML" text="XML"/>
+                    </items>
+                </ToolBar>
+                <ToolBar prefHeight="40.0" prefWidth="200.0">
+                    <items>
+                        <CheckBox fx:id="checkBoxLowPrio" mnemonicParsing="false" text="Low"/>
+                        <CheckBox fx:id="checkBoxMediumPrio" mnemonicParsing="false" text="Medium"/>
+                        <CheckBox fx:id="checkBoxHighPrio" mnemonicParsing="false" text="High"/>
+                        <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0"/>
+                        <CheckBox fx:id="checkBoxInProgress" mnemonicParsing="false" text="in Progress"/>
+                        <CheckBox fx:id="checkBoxWait" mnemonicParsing="false" text="Wait"/>
+                        <CheckBox fx:id="checkBoxDone" mnemonicParsing="false" text="Done"/>
+                        <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="1.0"/>
+                    </items>
+                </ToolBar>
+            </children>
+        </VBox>
+    </top>
 </BorderPane>

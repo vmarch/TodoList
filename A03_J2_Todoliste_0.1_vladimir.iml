@@ -24,5 +24,6 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="mysql:mysql-connector-java:8.0.25" level="project" />
+    <orderEntry type="library" name="jdom-2.0.6" level="project" />
   </component>
 </module>

@@ -2,7 +2,6 @@ package todo.ui.controller;
 
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
-import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -17,6 +16,7 @@ import todo.db.DBException;
 import todo.model.Prio;
 import todo.model.State;
 import todo.model.Todo;
+import todo.services.XMLWriterService;
 import todo.tools.DatePickerTableCell;
 import todo.tools.Filter;
 
@@ -25,7 +25,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static todo.model.Prio.*;
@@ -38,6 +37,7 @@ public class TodoController {
     private List<Todo> todoList;
     Filter filter = new Filter();
 
+    private XMLWriterService xmlWriterService = new XMLWriterService();
     //region FXML fields
     @FXML
     private TableView<Todo> tableView;
@@ -84,7 +84,6 @@ public class TodoController {
     @FXML
     public Label infoField;
 
-
     @FXML
     private CheckBox checkBoxLowPrio;
 
@@ -108,7 +107,6 @@ public class TodoController {
     //region INITIALIZE
     @FXML
     void initialize() {
-
 //        dao = new TodoDummyDAO();
         try {
             dao = new TodoMySQLDAO();
@@ -127,10 +125,11 @@ public class TodoController {
         setupTable();
 
         setupComboBox();
+
+        catchCallBackOfXMLWriteService();
     }
 
     private void setupCheckBoxFilter() {
-
 
         checkBoxLowPrio.selectedProperty().addListener((o, oldValue, newValue) -> {
             System.out.println(this.getClass().getSimpleName() + " > " + "checkBoxLowPrio > Value: " + newValue);
@@ -165,7 +164,7 @@ public class TodoController {
 
         checkBoxInProgress.selectedProperty().addListener((o, oldValue, newValue) -> {
             System.out.println(this.getClass().getSimpleName() + " > " + "checkBox.... > Value: " + newValue);
-           filter.setStateInProgress(newValue);
+            filter.setStateInProgress(newValue);
             updateFilter();
         });
 
@@ -452,8 +451,50 @@ public class TodoController {
 //        System.out.println("res click5: " + event.getTableView().getSelectionModel().getSelectedItem().getId());// Todo ID
 //        System.out.println("res click8: " + event.getTablePosition().getTableColumn().getId());//Column ID (fx:id...)
 
-
     }
 
+    //region XMLExportCallBack
+
+    @FXML
+    public void onActionSaveAsXML() {
+        List<Todo> list = dao.findAll();
+        if (null != list) {
+            xmlWriterService.setTodoList(list);
+            xmlWriterService.restart();
+        }
+    }
+
+    private void catchCallBackOfXMLWriteService() {
+
+        //if running
+        xmlWriterService.setOnRunning(running -> {
+            System.out.println(this.getClass().getSimpleName() + " -> urlService Running");
+        });
+
+        // if succeeded
+        xmlWriterService.setOnSucceeded(s -> {
+            System.out.println(this.getClass().getSimpleName() + " -> xmlWriterService Succeeded");
+            boolean result = xmlWriterService.getValue();
+            if (result) {
+                setInfoMessage("Your DB is saved as XML");
+            }else{
+                setErrorMessage("Your DB is NOT saved as XML");
+            }
+
+
+        });
+
+        // if failed
+        xmlWriterService.setOnFailed(fail -> {
+            fail.getSource().getException().printStackTrace();
+            System.out.println(this.getClass().getSimpleName() + " -> urlService Failed");
+
+        });
+
+        //if cancelled
+        xmlWriterService.setOnCancelled(cancelled -> {
+            System.out.println(this.getClass().getSimpleName() + " -> urlService Cancelled");
+        });
+    }
     //endregion
 }
