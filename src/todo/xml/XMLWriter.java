@@ -8,6 +8,10 @@ import todo.model.Todo;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.DirectoryNotEmptyException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.util.List;
 
 import static todo.tools.ConstantManager.*;
@@ -46,7 +50,8 @@ public class XMLWriter {
 
     public boolean writeFile(List<Todo> list) {
         try {
-            FileOutputStream out = new FileOutputStream(XML_FILE_PATH_TODOLISTE);
+
+            FileOutputStream out = new FileOutputStream(XML_FILE_TODOLISTE,false);
 
             //root
             Element rootElement = new Element(XML_ELEMENT_ROOT);
@@ -56,11 +61,9 @@ public class XMLWriter {
             XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat()); // Formatierung
             outputter.output(doc, out);
 
-        } catch (FileNotFoundException fileNotFoundException) {
+        } catch (Exception fileNotFoundException) {
             fileNotFoundException.printStackTrace();
 
-        } catch (Exception e) {
-            e.printStackTrace();
         }
 
         return true;

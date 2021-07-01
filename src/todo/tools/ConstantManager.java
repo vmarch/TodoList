@@ -14,7 +14,7 @@ public interface ConstantManager {
     String SQL_DB_NAME_TODOLISTE = "todoliste";
 
     //for XML
-    String XML_FILE_PATH_TODOLISTE = "todoliste.xml";
+    String XML_FILE_TODOLISTE = "todoliste.xml";
     String XML_ELEMENT_ROOT = "usertodoliste";
     String XML_ELEMENT_ITEM = "todoitem";
     String XML_ITEM_ATTRIBUTE_ID = "id";

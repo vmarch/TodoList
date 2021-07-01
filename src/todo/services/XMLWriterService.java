@@ -18,7 +18,7 @@ public class XMLWriterService extends Service<Boolean> {
     protected Task<Boolean> createTask() {
         return new Task<>() {
             @Override
-            protected Boolean call() throws Exception {
+            protected Boolean call() {
                 return XMLWriter.getInstance().writeFile(todoList);
             }
         };
